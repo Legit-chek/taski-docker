@@ -21,5 +21,8 @@ RUN pip install -r requirements.txt --no-cache-dir
 # в текущую рабочую директорию образа — /app.
 COPY . .
 
-# При старте контейнера запустить сервер разработки.
-CMD ["python", "manage.py", "runserver", "0:8000"] 
+RUN chmod +x /app/entrypoint.sh
+
+# При старте контейнера выполняем миграции/collectstatic и запускаем gunicorn.
+ENTRYPOINT ["/app/entrypoint.sh"]
+CMD ["gunicorn", "backend.wsgi:application", "--bind", "0.0.0.0:8000"]
